@@ -45,7 +45,7 @@ for e in range(episodes):
 
         env.render()
 
-        action = mario.act(state)
+        action = mario.act(state,model='target')
 
         next_state, reward, done, info = env.step(action)
 
