@@ -39,7 +39,7 @@ class Mario:
         self.loss_fn = torch.nn.SmoothL1Loss()
 
 
-    def act(self, state):
+    def act(self, state,model='online'):
         """
         Given a state, choose an epsilon-greedy action and update value of step.
 
@@ -56,7 +56,7 @@ class Mario:
         else:
             state = torch.FloatTensor(state).cuda() if self.use_cuda else torch.FloatTensor(state)
             state = state.unsqueeze(0)
-            action_values = self.net(state, model='online')
+            action_values = self.net(state, model=model)
             action_idx = torch.argmax(action_values, axis=1).item()
 
         # decrease exploration_rate
