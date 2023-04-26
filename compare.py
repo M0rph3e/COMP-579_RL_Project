@@ -1,7 +1,7 @@
 import random, datetime
 from pathlib import Path
 import matplotlib.pyplot as plt
-
+import torch
 import gym
 import gym_super_mario_bros
 from gym.wrappers import FrameStack, GrayScaleObservation, TransformObservation
@@ -95,7 +95,7 @@ logger_pg = MetricLogger(save_dir_pg)
 
 loggers = [logger_ddqn,logger_pg]
 
-episodes = 2500
+episodes = 1000
 k=10 # NUMBER OF EP WE LOG REWARD
 for (mario,logger) in zip(marios,loggers):
     if mario.__class__.__name__ == "MarioDDQN":
@@ -138,6 +138,7 @@ for (mario,logger) in zip(marios,loggers):
                 epsilon=mario.exploration_rate,
                 step=mario.curr_step
             )
+        torch.cuda.empty_cache() # because memory overflow
 
 
 compare_rewards(logger_ddqn,logger_pg,
