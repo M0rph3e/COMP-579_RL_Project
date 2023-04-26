@@ -33,6 +33,27 @@ def compare_rewards(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episode
     plt.legend()
     plt.savefig(path)
 
+def compare_length(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episodes', ylabel='Rewards'):
+    """
+    Compare and plot number of steps alongs episodes for tested agents
+    Inputs:
+    logger_a (MetricLogger)
+    logger_b (MetricLogger)
+    """
+    rewards_1 = logger_a.moving_avg_ep_lengths
+    rewards_2 = logger_b.moving_avg_ep_lengths
+    assert(len(rewards_1)==len(rewards_2))
+
+    x = [i*k for i in range(len(rewards_1))]
+    
+    plt.plot(x, rewards_1, label=name_a)
+    plt.plot(x, rewards_2, label=name_b)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title('Avg Number of steps per '+k+' episodes with ' + title + 'env')
+    plt.legend()
+    plt.savefig(path)
+
 
 env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0') #to change if try different
 modif = 'standard'
@@ -58,7 +79,8 @@ save_dir_pg.mkdir(parents=True)
 
 file_ddqn = 'trained_mario_ddqn.chkpt'
 file_pg = 'trained_mario_pg.pth'
-save_final_plot = Path(str(save_dir_ddqn.parent.resolve()) + '/comparison_'+modif+'.jpg')
+save_final_plot_r = Path(str(save_dir_ddqn.parent.resolve()) + '/reward_comparison_'+modif+'.jpg')
+save_final_plot_l = Path(str(save_dir_ddqn.parent.resolve()) + '/length_comparison_'+modif+'.jpg')
 checkpoint_ddqn = Path(file_ddqn)
 checkpoint_pg = Path(file_pg)
 
@@ -73,8 +95,8 @@ logger_pg = MetricLogger(save_dir_pg)
 
 loggers = [logger_ddqn,logger_pg]
 
-episodes = 10#00
-k=2 # NUMBER OF EP WE LOG REWARD
+episodes = 2500
+k=10 # NUMBER OF EP WE LOG REWARD
 for (mario,logger) in zip(marios,loggers):
     if mario.__class__.__name__ == "MarioDDQN":
         mario.exploration_rate = mario.exploration_rate_min
@@ -121,7 +143,11 @@ for (mario,logger) in zip(marios,loggers):
 compare_rewards(logger_ddqn,logger_pg,
                 mario_ddqn.__class__.__name__,
                 mario_pg.__class__.__name__,
-                k,modif,save_final_plot)
+                k,modif,save_final_plot_r)
+compare_length(logger_ddqn,logger_pg,
+                mario_ddqn.__class__.__name__,
+                mario_pg.__class__.__name__,
+                k,modif,save_final_plot_l)
 
 
 
