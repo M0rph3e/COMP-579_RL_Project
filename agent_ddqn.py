@@ -25,7 +25,8 @@ class MarioDDQN:
         self.sync_every = 2   # no. of experiences between Q_target & Q_online sync
 
         self.save_every = 5e5   # no. of experiences between saving Mario Net
-        self.save_dir = save_dir
+        self.save_dir = save_dir / self.__class__.__name__
+        self.save_dir.mkdir(parents=True)
 
         self.use_cuda = torch.cuda.is_available()
 
@@ -151,7 +152,7 @@ class MarioDDQN:
 
 
     def save(self):
-        save_path = self.save_dir / f"mario_net_{int(self.curr_step // self.save_every)}.chkpt"
+        save_path = self.save_dir / f"mario_net_{int(self.curr_step // self.save_every)}"+self.__class__.__name__+".chkpt"
         torch.save(
             dict(
                 model=self.net.state_dict(),
