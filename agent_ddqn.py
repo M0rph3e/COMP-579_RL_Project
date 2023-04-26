@@ -29,6 +29,7 @@ class MarioDDQN:
         self.save_dir.mkdir(parents=True)
 
         self.use_cuda = torch.cuda.is_available()
+        self.device = 'cuda' if self.use_cuda else 'cpu'
 
         # Mario's DNN to predict the most optimal action - we implement this in the Learn section
         self.net = MarioNet(self.state_dim, self.action_dim).float()
@@ -80,8 +81,8 @@ class MarioDDQN:
         reward (float),
         done(bool))
         """
-        self.memory.append((torch.tensor(state.__array__()), torch.tensor(next_state.__array__()),
-                            torch.tensor([action]), torch.tensor([reward]), torch.tensor([done])))
+        self.memory.append((torch.tensor(state.__array__()).to(self.device), torch.tensor(next_state.__array__()).to(self.device),
+                            torch.tensor([action]).to(self.device), torch.tensor([reward]).to(self.device), torch.tensor([done]).to(self.device)))
 
 
     def recall(self):
@@ -162,7 +163,7 @@ class MarioDDQN:
         if not load_path.exists():
             raise ValueError(f"{load_path} does not exist")
 
-        ckp = torch.load(load_path, map_location=('cuda' if self.use_cuda else 'cpu'))
+        ckp = torch.load(load_path, map_location=self.device)
         exploration_rate = ckp.get('exploration_rate')
         state_dict = ckp.get('model')
 

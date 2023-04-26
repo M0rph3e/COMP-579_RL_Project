@@ -24,12 +24,9 @@ class MarioPG:
         self.curr_step = -99
 
         self.save_dir = save_dir
-        self.all_episode_rewards = []
-        self.all_mean_rewards = []
-        self.batch_rewards = []
 
         self.use_cuda = torch.cuda.is_available()
-
+        self.device = 'cuda' if self.use_cuda else 'cpu'
         # Mario's DNN to predict the most optimal action - we implement this in the Learn section
         self.net = MarioNet(self.state_dim, self.action_dim).float()
         if self.use_cuda:
@@ -68,15 +65,13 @@ class MarioPG:
         reward (float),
         done(bool))
         """
-        self.memory.append((torch.tensor(state.__array__()), torch.tensor(next_state.__array__()),
-                            torch.tensor([action]), torch.tensor([reward]), torch.tensor([done])))
+        self.memory.append((torch.tensor(state.__array__().to(self.device)), torch.tensor(next_state.__array__().to(self.device)),
+                            torch.tensor([action].to(self.device)), torch.tensor([reward]).to(self.device), torch.tensor([done]).to(self.device)))
 
         distribution = Categorical(self.net(state.unsqueeze(0)))
         self.episode_actions = torch.cat([self.episode_actions, distribution.log_prob(action).reshape(1)])
         self.episode_rewards.append(reward)
-        if done:
-            self.all_episode_rewards.append(np.sum(self.episode_rewards))
-            self.batch_rewards.append(np.sum(self.episode_rewards))
+
 
 
 
@@ -133,7 +128,7 @@ class MarioPG:
             raise ValueError(f"{load_path} does not exist")
 
         
-        state_dict = torch.load(load_path, map_location=('cuda' if self.use_cuda else 'cpu'))
+        state_dict = torch.load(load_path, map_location=self.device)
         print(f"Loading model at {load_path}")
         self.net.model.load_state_dict(state_dict)
 
