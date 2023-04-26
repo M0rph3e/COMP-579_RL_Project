@@ -16,19 +16,14 @@ class MarioPG:
         self.action_dim = action_dim
         self.memory = deque(maxlen=100000)
         self.batch_size = 10
-
-        self.exploration_rate = 1
-        self.exploration_rate_decay = 0.99999975
-        self.exploration_rate_min = 0.1
         self.gamma = 0.95
 
-        self.curr_step = 0
-        self.burnin = 1e5  # min. experiences before training
-        self.learn_every = 3   # no. of experiences between updates to Q_online
+        #Useless stuffs for metrics consistency
+        self.epsilon = -99
+        self.exploration_rate = -99
+        self.curr_step = -99
 
-        self.save_every = 5e5   # no. of experiences between saving Mario Net
         self.save_dir = save_dir
-
         self.all_episode_rewards = []
         self.all_mean_rewards = []
         self.batch_rewards = []
@@ -127,28 +122,24 @@ class MarioPG:
 
 
     def save(self):
-        save_path = self.save_dir / f"mario_net_{int(self.curr_step // self.save_every)}.chkpt"
+        save_path = self.save_dir / f"mario_net_"+self.__class__.__name__+".pth"
         torch.save(
             dict(
-                model=self.net.state_dict(),
-                exploration_rate=self.exploration_rate
-            ),
+                model=self.net.state_dict()),
             save_path
         )
-        print(f"MarioNet saved to {save_path} at step {self.curr_step}")
+        print(f"MarioNet saved to {save_path}")
+
 
 
     def load(self, load_path):
         if not load_path.exists():
             raise ValueError(f"{load_path} does not exist")
 
-        ckp = torch.load(load_path, map_location=('cuda' if self.use_cuda else 'cpu'))
-        exploration_rate = ckp.get('exploration_rate')
-        state_dict = ckp.get('model')
-
-        print(f"Loading model at {load_path} with exploration rate {exploration_rate}")
-        self.net.load_state_dict(state_dict)
-        self.exploration_rate = exploration_rate
+        
+        state_dict = torch.load(load_path, map_location=('cuda' if self.use_cuda else 'cpu'))
+        print(f"Loading model at {load_path}")
+        self.net.model.load_state_dict(state_dict)
 
 
 class MarioNet(nn.Module):
