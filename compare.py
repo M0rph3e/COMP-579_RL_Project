@@ -29,14 +29,14 @@ def compare_rewards(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episode
     plt.plot(x, rewards_2, label=name_b)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.title('Avg Rewards per f{k} episodes with ' + title + 'env')
+    plt.title('Avg Rewards per '+k+' episodes with ' + title + 'env')
     plt.legend()
     plt.savefig(path)
 
 
 env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0') #to change if try different
 modif = 'standard'
-render = True
+render = False
 env = JoypadSpace(
     env,
     [['right'],
@@ -73,8 +73,8 @@ logger_pg = MetricLogger(save_dir_pg)
 
 loggers = [logger_ddqn,logger_pg]
 
-episodes = 25#00
-k=5 # NUMBER OF EP WE LOG REWARD
+episodes = 10#00
+k=2 # NUMBER OF EP WE LOG REWARD
 for (mario,logger) in zip(marios,loggers):
     if mario.__class__.__name__ == "MarioDDQN":
         mario.exploration_rate = mario.exploration_rate_min
