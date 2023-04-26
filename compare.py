@@ -113,13 +113,13 @@ for (mario,logger) in zip(marios,loggers):
             next_state, reward, done, info = env.step(action)
             #Episode Roll out depend on which agent is used
             if mario.__class__.__name__ == "MarioDDQN":
-                mario.cache(state, next_state, action, reward, done)
+                #mario.cache(state, next_state, action, reward, done)
                 logger.log_step(reward, None, None)
                 state = next_state
                 if done or info['flag_get']:
                     break
             elif mario.__class__.__name__ == "MarioPG":
-                mario.cache(state, next_state, action, reward, done)
+                #mario.cache(state, next_state, action, reward, done)
                 logger.log_step(reward, None, None)
                 state = next_state
                 if done or info['flag_get']:
