@@ -51,7 +51,7 @@ class MarioPG:
         Outputs:
         action (int): An integer representing which action Mario will perform
         """
-        state = torch.FloatTensor(state).cuda() if self.use_cuda else torch.FloatTensor(state)
+        state = torch.FloatTensor(state.__array__()).cuda() if self.use_cuda else torch.FloatTensor(state.__array__())
         state = state.unsqueeze(0)
         distribution = Categorical(self.net(state))
         action = distribution.sample()
@@ -68,12 +68,8 @@ class MarioPG:
         reward (float),
         done(bool))
         """
-        state = torch.FloatTensor(state).cuda() if self.use_cuda else torch.FloatTensor(state)
-        next_state = torch.FloatTensor(next_state).cuda() if self.use_cuda else torch.FloatTensor(next_state)
-        action = torch.LongTensor([action]).cuda() if self.use_cuda else torch.LongTensor([action])
-        done = torch.BoolTensor([done]).cuda() if self.use_cuda else torch.BoolTensor([done])
-        reward_ = torch.DoubleTensor([reward]).cuda() if self.use_cuda else torch.DoubleTensor([reward])
-        self.memory.append( (state, next_state, action, reward_, done,) )
+        self.memory.append((torch.tensor(state.__array__()), torch.tensor(next_state.__array__()),
+                            torch.tensor([action]), torch.tensor([reward]), torch.tensor([done])))
 
         distribution = Categorical(self.net(state.unsqueeze(0)))
         self.episode_actions = torch.cat([self.episode_actions, distribution.log_prob(action).reshape(1)])
