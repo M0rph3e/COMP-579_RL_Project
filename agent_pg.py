@@ -65,8 +65,9 @@ class MarioPG:
         reward (float),
         done(bool))
         """
-        self.memory.append((torch.tensor(state.__array__().to(self.device)), torch.tensor(next_state.__array__().to(self.device)),
-                            torch.tensor([action].to(self.device)), torch.tensor([reward]).to(self.device), torch.tensor([done]).to(self.device)))
+        state, next_state, action, reward,done  =(torch.FloatTensor(state.__array__()).to(self.device), torch.tensor(next_state.__array__()).to(self.device),
+                            torch.tensor([action]).to(self.device), torch.tensor([reward]).to(self.device), torch.tensor([done]).to(self.device))
+        self.memory.append((state, next_state, action, reward,done))
 
         distribution = Categorical(self.net(state.unsqueeze(0)))
         self.episode_actions = torch.cat([self.episode_actions, distribution.log_prob(action).reshape(1)])
