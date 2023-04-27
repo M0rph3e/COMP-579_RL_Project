@@ -29,7 +29,7 @@ def compare_rewards(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episode
     plt.plot(x, rewards_2, label=name_b)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.title('Avg Rewards per '+str(k)+' episodes with ' + title + 'env')
+    plt.title('Avg Rewards per '+str(k)+' episodes with ' + title + ' env')
     plt.legend()
     plt.savefig(path)
 
