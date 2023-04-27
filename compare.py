@@ -24,7 +24,7 @@ def compare_rewards(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episode
     assert(len(rewards_1)==len(rewards_2))
 
     x = [i*k for i in range(len(rewards_1))]
-    
+    plt.figure(0)
     plt.plot(x, rewards_1, label=name_a)
     plt.plot(x, rewards_2, label=name_b)
     plt.xlabel(xlabel)
@@ -33,7 +33,7 @@ def compare_rewards(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episode
     plt.legend()
     plt.savefig(path)
 
-def compare_length(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episodes', ylabel='Rewards'):
+def compare_length(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episodes', ylabel='N_Steps'):
     """
     Compare and plot number of steps alongs episodes for tested agents
     Inputs:
@@ -45,7 +45,7 @@ def compare_length(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episodes
     assert(len(rewards_1)==len(rewards_2))
 
     x = [i*k for i in range(len(rewards_1))]
-    
+    plt.figure(1)
     plt.plot(x, rewards_1, label=name_a)
     plt.plot(x, rewards_2, label=name_b)
     plt.xlabel(xlabel)
@@ -55,8 +55,8 @@ def compare_length(logger_a,logger_b,name_a,name_b,k,title,path,xlabel='Episodes
     plt.savefig(path)
 
 
-env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0') #to change if try different
-modif = 'standard'
+env = gym_super_mario_bros.make('SuperMarioBros-1-1-v3') #to change if try different
+modif = 'rectangle'
 render = False
 env = JoypadSpace(
     env,
@@ -95,8 +95,8 @@ logger_pg = MetricLogger(save_dir_pg)
 
 loggers = [logger_ddqn,logger_pg]
 
-episodes = 1000
-k=10 # NUMBER OF EP WE LOG REWARD
+episodes = 10
+k=2 # NUMBER OF EP WE LOG REWARD
 for (mario,logger) in zip(marios,loggers):
     if mario.__class__.__name__ == "MarioDDQN":
         mario.exploration_rate = mario.exploration_rate_min
