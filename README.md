@@ -2,7 +2,16 @@
 
 Project based on MadMario PyTorch tutorial (see below)
 
+# Changes brought to the project 
+In this project we implemented the Double DQN Agent initially made in this tutorial.
+We then compared the pretrained agent with another pretrained Policy gradient agent from [*A Simple Guide To Reinforcement Learning With The Super Mario Bros. Environment*](https://medium.com/geekculture/a-simple-guide-to-reinforcement-learning-with-the-super-mario-bros-environment-495a13974a54).
 
+This comparison can be found in the `compare.py` file.
+
+**ATTENTION**
+
+This repository works with a gym version lower than 0.21.0 (for consitency from tutorial)
+You can use the conda environment file to have proper version of packages
 # MadMario
 PyTorch [official tutorial](https://pytorch.org/tutorials/intermediate/mario_rl_tutorial.html) to build an AI-powered Mario.
 
